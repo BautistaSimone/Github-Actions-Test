@@ -1,4 +1,4 @@
-name: Java CI
+name: Java CI & Deploy to Railway
 
 on:
   push:
@@ -7,32 +7,35 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
-
-
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      # 2️⃣ Configurar JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Make gradlew executable
-      run: chmod +x gradlew
+      # 3️⃣ Hacer gradlew ejecutable
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew build
+      # 4️⃣ Build y tests
+      - name: Build with Gradle
+        run: ./gradlew build
 
-    - name: Install Railway CLI
-      run: curl -fsSL https://railway.app/install.sh | sh
+      # 5️⃣ Instalar Railway CLI
+      - name: Install Railway CLI
+        run: curl -fsSL https://railway.app/install.sh | sh
 
-    - name: Deploy to Railway
-      env:
-        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      run: railway up
+      # 6️⃣ Deploy a Railway
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}  # tu secret en GitHub
+        run: railway up
